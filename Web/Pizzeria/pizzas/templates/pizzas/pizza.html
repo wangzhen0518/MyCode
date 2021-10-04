@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pizza</title>
+</head>
+<body>
+{% extends "pizzas/base.html" %}
+{% block content %}
+<h1>Topic: {{ topic }}</h1>
+<h2>Toppings:</h2>
+<ul>
+    {% for topping in toppings %}
+    <li>
+        <p>{{ topping.date_added|date:'M d, Y H:i' }}</p>
+        <p>{{ topping.name|linebreaks }}</p>
+    </li>
+    {% empty %}
+    <li>
+        There are no toppings for this pizza yet.
+    </li>
+    {% endfor %}
+</ul>
+{% endblock content %}
+</body>
+</html>
