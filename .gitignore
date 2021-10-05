@@ -1,4 +1,3 @@
-test_*
-test.*
+test*
 *.exe
 *.out

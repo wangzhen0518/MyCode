@@ -2,6 +2,7 @@
 #include "data_structure.hpp"
 #include <random>
 #include <time.h>
+#include <cmath>
 
 #define MAX 100000000
 // insertion sort
@@ -121,4 +122,90 @@ void random_quick_sort(T a[], int p, int r)
         random_quick_sort(a, p, q - 1);
         random_quick_sort(a, q + 1, r);
     }
+}
+
+// counting sort
+// must be used to sort on integers
+void counting_sort(int a[], int b[], int len, int max)
+{
+    int *c = new int[max + 1];
+    for (int i = 0; i <= max; i++)
+        c[i] = 0;
+    for (int i = 0; i < len; i++)
+        c[a[i]]++;
+    for (int i = 0; i < max; i++)
+        c[i + 1] += c[i];
+
+    for (int i = len - 1; i >= 0; i--)
+    {
+        b[c[a[i]] - 1] = a[i];
+        c[a[i]]--;
+    }
+    delete[] c;
+}
+void counting_sort(int a[], int b[], int len)
+{
+    int max = a[0];
+    for (int i = 1; i < len; i++)
+        if (max < a[i])
+            max = a[i];
+
+    counting_sort(a, b, len, max);
+}
+void counting_sort(int a[], int len, int max)
+{
+    int *b = new int[len];
+    counting_sort(a, b, len, max);
+    for (int i = 0; i < len; i++)
+        a[i] = b[i];
+    delete[] b;
+}
+void counting_sort(int a[], int len)
+{
+    int *b = new int[len];
+    counting_sort(a, b, len);
+    for (int i = 0; i < len; i++)
+        a[i] = b[i];
+    delete[] b;
+}
+
+// radix sort - based on decimalism
+void counting_sort(int a[], int len, int max, int d)
+{
+    int x;
+    int *c = new int[max + 1]{0};
+    for (int i = 0; i < len; i++)
+    {
+        x = a[i] % int(pow(10, d)) / int(pow(10, d - 1));
+        c[x]++;
+    }
+    for (int i = 0; i < max; i++)
+        c[i + 1] += c[i];
+
+    int *b = new int[len];
+    for (int i = len - 1; i >= 0; i--)
+    {
+        x = a[i] % int(pow(10, d)) / int(pow(10, d - 1));
+        b[c[x] - 1] = a[i];
+        c[x]--;
+    }
+    for (int i = 0; i < len; i++)
+        a[i] = b[i];
+    delete[] b;
+    delete[] c;
+}
+void radix_sort(int a[], int len, int max)
+{
+    int d = log10(max) + 1;
+    int *temp = new int[len];
+    for (int i = 1; i <= d; i++)
+        counting_sort(a, len, 9, i);
+}
+void radix_sort(int a[], int len)
+{
+    int max = a[0];
+    for (int i = 0; i < len; i++)
+        if (a[i] > max)
+            max = a[i];
+    radix_sort(a, len, max);
 }
