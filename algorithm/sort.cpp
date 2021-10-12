@@ -1,5 +1,5 @@
 /***** Here are some sorting algorithm *****/
-#include "data_structure.hpp"
+#include "data_structure.h"
 #include <random>
 #include <time.h>
 #include <cmath>
@@ -66,6 +66,8 @@ void merge_sort(T a[], int p, int r)
 template <typename T>
 void heap_sort(T a[], int len)
 {
+    using MyDataStructure::build_max_heap;
+    using MyDataStructure::max_heap;
     max_heap<T> temp_heap = build_max_heap(a, len);
     temp_heap.sort();
     for (int i = 0; i < len; i++)
@@ -107,7 +109,7 @@ template <typename T>
 int random_partition(T a[], int p, int r)
 {
     srand(time(NULL));
-    int i = rand() % (r - p) + p;
+    int i = rand() % (r - p + 1) + p;
     T temp = a[i];
     a[i] = a[r];
     a[r] = temp;
@@ -149,7 +151,6 @@ void counting_sort(int a[], int b[], int len)
     for (int i = 1; i < len; i++)
         if (max < a[i])
             max = a[i];
-
     counting_sort(a, b, len, max);
 }
 void counting_sort(int a[], int len, int max)
@@ -208,4 +209,84 @@ void radix_sort(int a[], int len)
         if (a[i] > max)
             max = a[i];
     radix_sort(a, len, max);
+}
+
+// random select
+template <typename T>
+T randomized_select(T a[], int p, int r, int i)
+{
+    if (p == r)
+        return a[p];
+    int q = random_partition(a, p, r);
+    int k = q - p + 1;
+    if (i == k)
+        return a[q];
+    else if (i < k)
+        return randomized_select(a, p, q - 1, i);
+    else
+        return randomized_select(a, q + 1, r, i - k);
+}
+
+// select cost O(n) time even in the worst cases
+template <typename T>
+int select_partition(T a[], int p, int r, T x)
+{
+    // find x position in array a
+    int i = p;
+    for (; i <= r; i++)
+        if (a[i] == x)
+            break;
+    // move a[i] to the end of subarray of array a
+    T temp = a[i];
+    a[i] = a[r];
+    a[r] = temp;
+    // partition the sub array based on value of x
+    int m = p;
+    for (int n = p; n < r; n++)
+    {
+        if (a[n] < x)
+        {
+            temp = a[n];
+            a[n] = a[m];
+            a[m] = temp;
+            m++;
+        }
+    }
+    a[r] = a[m];
+    a[m] = x;
+    return m;
+}
+template <typename T>
+T select(T a[], int p, int r, int i)
+{
+    if (p == r)
+        return a[p];
+
+    // the number of array elements is r - p + 1
+    // add 4 then is divided by 5 to round up the value
+    int num = (r - p + 1 + 4) / 5;
+    // find the median of each array and put them into mid_arr
+    T *mid_arr = new T[num];
+    int j = 0;
+    T *temp_arr = new T[5];
+    for (; j < num - 1; j++)
+    {
+        insertion_sort(a + p + 5 * j, 5);
+        mid_arr[j] = a[p + 5 * j + 2];
+    }
+    int len_tail = r - p + 1 - 5 * j;
+    insertion_sort(a + p + 5 * j, len_tail);
+    mid_arr[j] = a[p + 5 * j + (len_tail + 1) / 2 - 1];
+    // find the median of mid_arr
+    T key = select(mid_arr, 0, num - 1, (num + 1) / 2);
+    delete[] mid_arr;
+    // judge divide and conquer
+    int q = select_partition(a, p, r, key);
+    int k = q - p + 1;
+    if (i == k)
+        return a[q];
+    else if (i < k)
+        return select(a, p, q - 1, i);
+    else
+        return select(a, q + 1, r, i - k);
 }
