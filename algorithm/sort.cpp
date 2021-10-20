@@ -78,7 +78,7 @@ void heap_sort(T a[], int len)
 template <typename T>
 int partition(T a[], int p, int r)
 {
-    int key = a[r];
+    T key = a[r];
     int j = p;
     for (int i = p; i < r; i++)
     {
