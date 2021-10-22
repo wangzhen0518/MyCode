@@ -10,7 +10,7 @@
 #include "data_structure.h"
 namespace MyAlgorithm {
 template <typename T>
-inline void swap(T &a, T &b) {
+inline void swap(T& a, T& b) {
     T temp = a;
     a = b;
     b = temp;
@@ -36,8 +36,8 @@ template <typename T>
 void merge(T a[], int p, int q, int r) {
     int len1 = q - p + 1;
     int len2 = r - q;
-    T *ar1 = new T[len1 + 1];
-    T *ar2 = new T[len2 + 1];
+    T* ar1 = new T[len1 + 1];
+    T* ar2 = new T[len2 + 1];
     for (int i = 0; i < len1; i++)
         ar1[i] = a[p + i];
     for (int i = 0; i < len2; i++)
@@ -127,7 +127,7 @@ void random_quick_sort(T a[], int p, int r) {
 // counting sort
 // must be used to sort on integers
 void counting_sort(int a[], int b[], int len, int max) {
-    int *c = new int[max + 1];
+    int* c = new int[max + 1];
     for (int i = 0; i <= max; i++)
         c[i] = 0;
     for (int i = 0; i < len; i++)
@@ -148,14 +148,14 @@ void counting_sort(int a[], int b[], int len) {
     counting_sort(a, b, len, max);
 }
 void counting_sort(int a[], int len, int max) {
-    int *b = new int[len];
+    int* b = new int[len];
     counting_sort(a, b, len, max);
     for (int i = 0; i < len; i++)
         a[i] = b[i];
     delete[] b;
 }
 void counting_sort(int a[], int len) {
-    int *b = new int[len];
+    int* b = new int[len];
     counting_sort(a, b, len);
     for (int i = 0; i < len; i++)
         a[i] = b[i];
@@ -165,7 +165,7 @@ void counting_sort(int a[], int len) {
 // radix sort - based on decimalism
 void counting_sort(int a[], int len, int max, int d) {
     int x;
-    int *c = new int[max + 1]{0};
+    int* c = new int[max + 1]{0};
     for (int i = 0; i < len; i++) {
         x = a[i] % int(pow(10, d)) / int(pow(10, d - 1));
         c[x]++;
@@ -173,7 +173,7 @@ void counting_sort(int a[], int len, int max, int d) {
     for (int i = 0; i < max; i++)
         c[i + 1] += c[i];
 
-    int *b = new int[len];
+    int* b = new int[len];
     for (int i = len - 1; i >= 0; i--) {
         x = a[i] % int(pow(10, d)) / int(pow(10, d - 1));
         b[c[x] - 1] = a[i];
@@ -186,7 +186,7 @@ void counting_sort(int a[], int len, int max, int d) {
 }
 void radix_sort(int a[], int len, int max) {
     int d = log10(max) + 1;
-    int *temp = new int[len];
+    int* temp = new int[len];
     for (int i = 1; i <= d; i++)
         counting_sort(a, len, 9, i);
 }
