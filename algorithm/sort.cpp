@@ -7,7 +7,7 @@
 #include <cmath>
 #include <random>
 
-#include "data_structure.h"
+#include "data_structure.hpp"
 namespace MyAlgorithm {
 template <typename T>
 inline void swap(T& a, T& b) {
@@ -144,7 +144,8 @@ void counting_sort(int a[], int b[], int len, int max) {
 void counting_sort(int a[], int b[], int len) {
     int max = a[0];
     for (int i = 1; i < len; i++)
-        if (max < a[i]) max = a[i];
+        if (max < a[i])
+            max = a[i];
     counting_sort(a, b, len, max);
 }
 void counting_sort(int a[], int len, int max) {
@@ -193,14 +194,16 @@ void radix_sort(int a[], int len, int max) {
 void radix_sort(int a[], int len) {
     int max = a[0];
     for (int i = 0; i < len; i++)
-        if (a[i] > max) max = a[i];
+        if (a[i] > max)
+            max = a[i];
     radix_sort(a, len, max);
 }
 
 // random select
 template <typename T>
 T randomized_select(T a[], int p, int r, int i) {
-    if (p == r) return a[p];
+    if (p == r)
+        return a[p];
     int q = random_partition(a, p, r);
     int k = q - p + 1;
     if (i == k)
@@ -230,7 +233,8 @@ int getPivotIndex_quick_select(T a[], int p, int r) {
 }
 template <typename T>
 int quick_select(T a[], int p, int r, int k) {
-    if (p == r) return p;
+    if (p == r)
+        return p;
 
     int pivotIndex = getPivotIndex_quick_select(a, p, r);
     pivotIndex = partition(a, p, r, pivotIndex);

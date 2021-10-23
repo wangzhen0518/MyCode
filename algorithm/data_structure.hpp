@@ -61,8 +61,7 @@ public:
     queue(const queue& q)
         : max_size(q.max_size), mem_num(q.mem_num), rear(q.mem_num) {
         ar = new T[q.max_size];
-        for (int i = 0, j = q.head; i < mem_num;
-             i++, j = (j + 1) % max_size)
+        for (int i = 0, j = q.head; i < mem_num; i++, j = (j + 1) % max_size)
             ar[i] = q.ar[j];
     }
     const queue& operator=(const queue& q) {
@@ -89,18 +88,17 @@ public:
 
 // list
 template <typename T>
+struct list_node {
+    T key;
+    list_node* prev;
+    list_node* next;
+
+    list_node() : prev(nullptr), next(nullptr) {}
+    list_node(T k, list_node* p, list_node* n) : key(k), prev(p), next(n) {}
+};
+template <typename T>
 class list {
 public:
-    template <typename U>
-    struct list_node {
-        U key;
-        list_node* prev;
-        list_node* next;
-
-        list_node() : prev(nullptr), next(nullptr) {}
-        list_node(list_node* p, list_node* n) : prev(p), next(n) {}
-    };
-
 private:
     list_node<T>* head;
     list_node<T>* rear;
@@ -125,7 +123,7 @@ protected:
     int right(int i) { return 2 * i + 2; }
 
 public:
-    const T& operator[](int n) { return m_ar[n]; }
+    // const T& operator[](int n) { return m_ar[n]; }
     T& operator[](int n) { return m_ar[n]; }
     int length() { return m_ar.size(); }
     const int heap_size() { return m_heap_size; }
@@ -161,29 +159,112 @@ public:
 
 // binary search tree
 template <typename T>
+struct BSTNode {
+    T key;
+    BSTNode* lchild = nullptr;
+    BSTNode* rchild = nullptr;
+    BSTNode* parent = nullptr;
+    BSTNode(T value, BSTNode* l = nullptr, BSTNode* r = nullptr,
+            BSTNode* p = nullptr)
+        : key(value), lchild(l), rchild(r), parent(p) {}
+    // BSTNode() : lchild(nullptr), rchild(nullptr), parent(nullptr) {}
+};
+template <typename T>
 class BSTree {
-public:
-    template <typename U>
+protected:
+    BSTNode<T>* root = nullptr;
 
-    struct BSTNode {
-        U key;
-        BSTNode* lchild;
-        BSTNode* rchild;
-        BSTNode* parent;
-        BSTNode(U value, BSTNode* l, BSTNode* r, BSTNode* p)
-            : key(value), lchild(l), rchild(r), parent(p) {}
-        BSTNode()
-            : lchild(nullptr), rchild(nullptr), parent(nullptr) {}
-    };
+protected:
+    void preOrder(BSTNode<T>* t) const;
+    void inOrder(BSTNode<T>* t) const;
+    void postOrder(BSTNode<T>* t) const;
 
-private:
-    BSTNode<T>* root;
+    BSTNode<T>* search(BSTNode<T>* t, const T& key) const;
+
+    BSTNode<T>* minimum(BSTNode<T>* t) const;
+    BSTNode<T>* maximum(BSTNode<T>* t) const;
+
+    BSTNode<T>* insert(BSTNode<T>* t, BSTNode<T>* x);
+    void transplant(BSTNode<T>* u, BSTNode<T>* v);
+    BSTNode<T>* remove(BSTNode<T>* x);
+    void destroy(BSTNode<T>*& t);
+
+    void print(BSTNode<T>* t, const T& key, int direction) const;
 
 public:
     BSTree() {}
-    ~BSTree() {}
+    ~BSTree() { destroy(root); }
+
+    void preOrder() const;
+    void inOrder() const;
+    void postOrder() const;
+
+    BSTNode<T>* search(const T& key) const;
+
+    T minimum() const;
+    T maximum() const;
+
+    BSTNode<T>* predecessor(BSTNode<T>* x);
+    BSTNode<T>* successor(BSTNode<T>* x);
+
+    bool insert(const T& key);
+    bool remove(const T& key);
+    void destroy();
+
+    void print();
 };
 
+// red black tree
+enum class RBTNodeColor { red, black };
+template <typename T>
+struct RBTNode {
+    RBTNodeColor color;
+    T key;
+    RBTNode* lchild = nullptr;
+    RBTNode* rchild = nullptr;
+    RBTNode* parent = nullptr;
+    RBTNode(T value, RBTNodeColor c = RBTNodeColor::red, RBTNode* l = nullptr,
+            RBTNode* r = nullptr, RBTNode* p = nullptr)
+        : color(c), lchild(l), rchild(r), parent(p) {}
+};
+template <typename T>
+class RBTree {
+private:
+    RBTNode<T>* root;
+    RBTNode<T>* nil;
+
+private:
+    RBTNode<T>* search(RBTNode<T>* t, const T& key) const;
+
+    RBTNode<T>* minimum(RBTNode<T>* t) const;
+
+    void LeftRotate(RBTNode<T>* x);
+    void RightRotate(RBTNode<T>* x);
+
+    RBTNode<T>* insert(RBTNode<T>* t, RBTNode<T>* x);
+    void insert_fixup(RBTNode<T>* z);
+    void transplant(RBTNode<T>* u, RBTNode<T>* v);
+    RBTNode<T>* remove(RBTNode<T>* z);
+    void remove_fixup(RBTNode<T>* z);
+
+public:
+    RBTree() {
+        nil = new RBTNode<T>;
+        nil->color = RBTNodeColor::black;
+        nil->lchild = nil->rchild = nil;
+        root = nil;
+    }
+    ~RBTree() {
+        delete nil;
+        nil = nullptr;
+    }
+    RBTNode<T>* search(const T& key) const;
+
+    T minimum() const;
+
+    bool insert(const T& key);
+    bool remove(const T& key);
+};
 //! QUESTION
 /*
  * 对于类继承后，派生类访问基类元素存在问题。
