@@ -30,8 +30,8 @@ bool InOrder(const BiTree t) {
         InOrder(t->lchild);
         //访问t
         InOrder(t->rchild);
-    } else
-        return true;
+    }
+    return true;
 }
 
 //先序遍历
@@ -40,8 +40,8 @@ bool PreOrder(const BiTree t) {
         //访问t
         PreOrder(t->lchild);
         PreOrder(t->rchild);
-    } else
-        return false;
+    }
+    return false;
 }
 
 //后序遍历
@@ -50,8 +50,8 @@ bool PostOrder(const BiTree t) {
         PostOrder(t->lchild);
         PostOrder(t->rchild);
         //访问t
-    } else
-        return true;
+    }
+    return true;
 }
 
 //构造二叉树
@@ -62,7 +62,8 @@ bool CreateBiTree(BiTree* t) {
         *t = NULL;
     else {
         *t = (BiTNode*)malloc(sizeof(BiTNode));
-        if (*t == NULL) return false;
+        if (*t == NULL)
+            return false;
         (*t)->data = ch;
         CreateBiTree(&((*t)->lchild));
         CreateBiTree(&((*t)->rchild));
@@ -74,7 +75,8 @@ bool CreateBiTree(BiTree* t) {
 bool InOrderTraverse(BiTree t) {
     stack<BiTNode*> s;
     BiTNode* p;
-    if (t == nullptr) return false;
+    if (t == nullptr)
+        return false;
     s.push(t);
     while (!s.empty()) {
         //向左走到头
@@ -87,7 +89,6 @@ bool InOrderTraverse(BiTree t) {
             s.push(p->rchild);
         }
     }
-
     return true;
 }
 
@@ -95,14 +96,17 @@ bool InOrderTraverse(BiTree t) {
 bool PreOrderTraverse(BiTree t) {
     stack<BiTNode*> s;
     BiTNode* p;
-    if (t == nullptr) return false;
+    if (t == nullptr)
+        return false;
     s.push(t);
     while (!s.empty()) {
         p = s.top();  //访问
         s.pop();
         //先将右孩子入栈，再将左孩子入栈，以实现先访问左孩子，再访问右孩子
-        if (p->rchild != nullptr) s.push(p->rchild);
-        if (p->lchild != nullptr) s.push(p->lchild);
+        if (p->rchild != nullptr)
+            s.push(p->rchild);
+        if (p->lchild != nullptr)
+            s.push(p->lchild);
     }
     return true;
 }
@@ -111,7 +115,8 @@ bool PreOrderTraverse(BiTree t) {
 bool PostOrderTraverse(BiTree t) {
     stack<BiTNode*> s;
     BiTNode* p;
-    if (t == nullptr) return false;
+    if (t == nullptr)
+        return false;
     s.push(t);
     while (!s.empty()) {
         p = s.top();
@@ -144,6 +149,7 @@ bool PostOrderTraverse(BiTree t) {
         } else               // p有右节点，且右节点未入栈
             s.push(p->rchild);
     }
+    return true;
 }
 
 /**********树**********/

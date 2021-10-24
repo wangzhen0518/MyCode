@@ -214,7 +214,7 @@ public:
     void print();
 };
 
-// red black tree
+/******************** red black tree ********************/
 enum class RBTNodeColor { red, black };
 template <typename T>
 struct RBTNode {
@@ -223,9 +223,10 @@ struct RBTNode {
     RBTNode* lchild = nullptr;
     RBTNode* rchild = nullptr;
     RBTNode* parent = nullptr;
+    RBTNode() {}
     RBTNode(T value, RBTNodeColor c = RBTNodeColor::red, RBTNode* l = nullptr,
             RBTNode* r = nullptr, RBTNode* p = nullptr)
-        : color(c), lchild(l), rchild(r), parent(p) {}
+        : color(c), key(value), lchild(l), rchild(r), parent(p) {}
 };
 template <typename T>
 class RBTree {
@@ -234,9 +235,15 @@ private:
     RBTNode<T>* nil;
 
 private:
+    void preOrder(RBTNode<T>* t) const;
+    void inOrder(RBTNode<T>* t) const;
+    void postOrder(RBTNode<T>* t) const;
+    void print(RBTNode<T>* t, const T& key, int direction) const;
+
     RBTNode<T>* search(RBTNode<T>* t, const T& key) const;
 
     RBTNode<T>* minimum(RBTNode<T>* t) const;
+    RBTNode<T>* maximum(RBTNode<T>* t) const;
 
     void LeftRotate(RBTNode<T>* x);
     void RightRotate(RBTNode<T>* x);
@@ -247,23 +254,34 @@ private:
     RBTNode<T>* remove(RBTNode<T>* z);
     void remove_fixup(RBTNode<T>* z);
 
+    void destroy(RBTNode<T>* t);
+
 public:
     RBTree() {
         nil = new RBTNode<T>;
         nil->color = RBTNodeColor::black;
-        nil->lchild = nil->rchild = nil;
+        nil->parent = nil->lchild = nil->rchild = nil;
         root = nil;
     }
     ~RBTree() {
+        destroy();
         delete nil;
-        nil = nullptr;
     }
+
+    void preOrder() const;
+    void inOrder() const;
+    void postOrder() const;
+    void print() const;
+
     RBTNode<T>* search(const T& key) const;
 
     T minimum() const;
+    T maximum() const;
 
     bool insert(const T& key);
     bool remove(const T& key);
+
+    void destroy();
 };
 //! QUESTION
 /*

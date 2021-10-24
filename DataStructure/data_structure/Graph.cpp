@@ -1,14 +1,15 @@
-#include <iostream>
-//#include <stdlib.h>
+#include <stdlib.h>
+
 #include <cstring>
+#include <iostream>
 #include <queue>
 #include <stack>
 
 using std::queue;
 using std::stack;
 
-#define INFINITY INT_MAX   //最大值
-#define MAX_VERTEX_NUM 20  //最大顶点个数
+#define INFINITY 100000000  //最大值
+#define MAX_VERTEX_NUM 20   //最大顶点个数
 typedef enum {
     DG,       //有向无权图
     DN,       //有向有权图
@@ -441,7 +442,8 @@ bool Topologic_Sort(ALGraph2* g, int topol[MAX_VERTEX_NUM]) {
     //初始化
     count_indegree(g);
     for (k = 0; k < g->vexnum; k++)  //入度为零的点入栈
-        if (g->vertices[k].degree == 0) stack[top++] = g->vertices[k].id;
+        if (g->vertices[k].degree == 0)
+            stack[top++] = g->vertices[k].id;
 
     do {
         if (top == 0)
@@ -455,7 +457,8 @@ bool Topologic_Sort(ALGraph2* g, int topol[MAX_VERTEX_NUM]) {
             {
                 vex_now = p->adjvex;
                 g->vertices[vex_now].degree--;
-                if (g->vertices[vex_now].degree == 0) stack[top++] = vex_now;
+                if (g->vertices[vex_now].degree == 0)
+                    stack[top++] = vex_now;
                 p = p->nextarc;
             }
         }
@@ -473,7 +476,7 @@ void critical_path(ALGraph2* g) {
     int ve[MAX_VERTEX_NUM] = {0};  //事件最早发生时间
     int vl[MAX_VERTEX_NUM];        //事件最晚发生时间
     ArcNode2* p;
-    if (Topologic_Sort(g, topol) == -1)
+    if (Topologic_Sort(g, topol) == false)
         printf("AOE网中存在回路，错误！\n");
     else {
         //遍历拓扑序列中第m个顶点的边链表
@@ -485,7 +488,8 @@ void critical_path(ALGraph2* g) {
             p = g->vertices[j].firstarc;
             for (; p != nullptr; p = p->nextarc) {
                 k = p->adjvex;
-                if (ve[j] + p->w > ve[k]) ve[k] = ve[j] + p->w;
+                if (ve[j] + p->w > ve[k])
+                    ve[k] = ve[j] + p->w;
             }
         }
 
@@ -501,7 +505,8 @@ void critical_path(ALGraph2* g) {
             p = g->vertices[j].firstarc;
             for (; p != nullptr; p = p->nextarc) {
                 k = p->adjvex;
-                if (vl[k] - p->w < vl[j]) vl[j] = vl[k] - p->w;
+                if (vl[k] - p->w < vl[j])
+                    vl[j] = vl[k] - p->w;
             }
         }
         //注意更新ve和vl时，方法不完全相同
@@ -513,7 +518,8 @@ void critical_path(ALGraph2* g) {
             p = g->vertices[m].firstarc;
             for (; p != nullptr; p = p->nextarc) {
                 k = p->adjvex;
-                if ((ve[m] + p->w) == vl[k]) printf("<%d, %d>", m, k);
+                if ((ve[m] + p->w) == vl[k])
+                    printf("<%d, %d>", m, k);
             }
         }
         //注意，这里搜索的是边，而非顶点

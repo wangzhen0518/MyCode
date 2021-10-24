@@ -335,7 +335,7 @@ BSTNode<T>* BSTree<T>::insert(BSTNode<T>* t, BSTNode<T>* x) {
             return nullptr;
         if (t->key > x->key)
             t = t->lchild;
-        else if (t->key < x->key)
+        else
             t = t->rchild;
     }
     if (p == nullptr)  // empty tree
@@ -344,7 +344,7 @@ BSTNode<T>* BSTree<T>::insert(BSTNode<T>* t, BSTNode<T>* x) {
         x->parent = p;
         if (p->key > x->key)
             p->lchild = x;
-        else if (p->key < x->key)
+        else
             p->rchild = x;
     }
     return x;
@@ -467,21 +467,87 @@ void BSTree<T>::print() {
 
 template <typename T>
 void BSTree<T>::destroy(BSTNode<T>*& t) {
-    if (t == nullptr)
-        return;
-    if (t->lchild != nullptr)
+    if (t != nullptr) {
         destroy(t->lchild);
-    if (t->rchild != nullptr)
         destroy(t->rchild);
-    delete t;
-    t = nullptr;
+        delete t;
+        t = nullptr;
+    }
 }
 template <typename T>
 void BSTree<T>::destroy() {
     destroy(root);
 }
 
-// red black tree
+/******************** red black tree ********************/
+template <typename T>
+void RBTree<T>::preOrder(RBTNode<T>* t) const {
+    if (t != nil) {
+        std::cout << t->key << " ";
+        preOrder(t->lchild);
+        preOrder(t->rchild);
+    }
+}
+template <typename T>
+void RBTree<T>::preOrder() const {
+    preOrder(root);
+    std::cout << std::endl;
+}
+
+template <typename T>
+void RBTree<T>::inOrder(RBTNode<T>* t) const {
+    if (t != nil) {
+        inOrder(t->lchild);
+        std::cout << t->key << " ";
+        inOrder(t->rchild);
+    }
+}
+template <typename T>
+void RBTree<T>::inOrder() const {
+    inOrder(root);
+    std::cout << std::endl;
+}
+
+template <typename T>
+void RBTree<T>::postOrder(RBTNode<T>* t) const {
+    if (t != nil) {
+        postOrder(t->lchild);
+        postOrder(t->rchild);
+        std::cout << t->key << " ";
+    }
+}
+template <typename T>
+void RBTree<T>::postOrder() const {
+    postOrder(root);
+    std::cout << std::endl;
+}
+
+template <typename T>
+void RBTree<T>::print(RBTNode<T>* t, const T& key, int direction) const {
+    if (t != nil) {
+        if (direction == 0)
+            std::cout << std::setw(2) << t->key << " is root, color is "
+                      << (t->color == RBTNodeColor::red ? "red" : "black")
+                      << std::endl;
+        else
+            std::cout << std::setw(2) << t->key << " is " << key << "'s "
+                      << std::setw(12)
+                      << ((direction == 1) ? "right child" : "left child")
+                      << ", color is " << std::setw(6)
+                      << (t->color == RBTNodeColor::red ? "red" : "black")
+                      << std::endl;
+        print(t->lchild, t->key, -1);
+        print(t->rchild, t->key, 1);
+    }
+}
+template <typename T>
+void RBTree<T>::print() const {
+    if (root != nil)
+        print(root, root->key, 0);
+    else
+        std::cout << "enpty tree\n";
+}
+
 template <typename T>
 RBTNode<T>* RBTree<T>::search(RBTNode<T>* t, const T& key) const {
     while (t != nil && t->key != key) {
@@ -506,6 +572,22 @@ RBTNode<T>* RBTree<T>::minimum(RBTNode<T>* t) const {
 template <typename T>
 T RBTree<T>::minimum() const {
     RBTNode<T>* p = minimum(root);
+    if (p != nil)
+        return p->key;
+    else
+        return T(NULL);
+}
+
+template <typename T>
+RBTNode<T>* RBTree<T>::maximum(RBTNode<T>* t) const {
+    while (t->rchild != nil) {
+        t = t->rchild;
+    }
+    return t;
+}
+template <typename T>
+T RBTree<T>::maximum() const {
+    RBTNode<T>* p = maximum(root);
     if (p != nil)
         return p->key;
     else
@@ -554,7 +636,7 @@ RBTNode<T>* RBTree<T>::insert(RBTNode<T>* t, RBTNode<T>* x) {
             return nil;
         if (t->key > x->key)
             t = t->lchild;
-        else if (t->key < x->key)
+        else
             t = t->rchild;
     }
     x->parent = p;
@@ -586,6 +668,7 @@ void RBTree<T>::insert_fixup(RBTNode<T>* z) {
         if (p == p->parent->lchild) {
             RBTNode<T>* uncle = p->parent->rchild;
             // case1
+            // uncle is red
             if (uncle->color == RBTNodeColor::red) {
                 p->parent->color = RBTNodeColor::red;
                 p->color = RBTNodeColor::black;
@@ -594,23 +677,27 @@ void RBTree<T>::insert_fixup(RBTNode<T>* z) {
                 p = z->parent;
             }
             // case2
+            // uncle is black and z is p's rchild
             else if (z == p->rchild) {
                 z = p;
-                p = z->parent;
                 LeftRotate(z);
+                p = z->parent;
             }
             // case3
+            // uncle is black and z is p's lchild
             else {
                 p->color = RBTNodeColor::black;
                 z = p->parent;
                 z->color = RBTNodeColor::red;
                 RightRotate(z);
+                p = z->parent;
             }
         }
-        // same as if, just p == p->parent->rchild
+        // same as if, just z == p->parent->rchild
         else {
             RBTNode<T>* uncle = p->parent->lchild;
             // case1
+            // uncle is red
             if (uncle->color == RBTNodeColor::red) {
                 p->parent->color = RBTNodeColor::red;
                 p->color = RBTNodeColor::black;
@@ -619,17 +706,20 @@ void RBTree<T>::insert_fixup(RBTNode<T>* z) {
                 p = z->parent;
             }
             // case2
+            // uncle is black and z is p's lchild
             else if (z == p->lchild) {
                 z = p;
-                p = z->parent;
                 RightRotate(z);
+                p = z->parent;
             }
             // case3
+            // uncle is black and z is p's rchild
             else {
                 p->color = RBTNodeColor::black;
                 z = p->parent;
                 z->color = RBTNodeColor::red;
                 LeftRotate(z);
+                p = z->parent;
             }
         }
     }
@@ -661,6 +751,7 @@ RBTNode<T>* RBTree<T>::remove(RBTNode<T>* z) {
         RBTNode<T>* suc = minimum(z->rchild);
         origin_c = suc->color;
         x = suc->rchild;
+        x->parent = suc;  // x may be nil
         if (suc->parent != z) {
             transplant(suc, suc->rchild);
             suc->rchild = z->rchild;
@@ -673,6 +764,7 @@ RBTNode<T>* RBTree<T>::remove(RBTNode<T>* z) {
     }
     if (origin_c == RBTNodeColor::black)
         remove_fixup(x);
+    return x;
 }
 template <typename T>
 bool RBTree<T>::remove(const T& key) {
@@ -685,7 +777,107 @@ bool RBTree<T>::remove(const T& key) {
     return false;
 }
 template <typename T>
-void remove_fixup(RBTNode<T>* z) {}
+void RBTree<T>::remove_fixup(RBTNode<T>* z) {
+    RBTNode<T>* p = z->parent;
+    while (z != root && z->color == RBTNodeColor::black) {
+        if (z == p->lchild) {
+            RBTNode<T>* s = p->rchild;
+            // case1
+            // sibling is red
+            if (s->color == RBTNodeColor::red) {
+                s->color = RBTNodeColor::black;
+                p->color = RBTNodeColor::red;
+                LeftRotate(p);
+                s = p->rchild;
+            }
+            // case2
+            // sibling is black
+            // and both of its children are black
+            if (s->lchild->color == RBTNodeColor::black &&
+                s->rchild->color == RBTNodeColor::black) {
+                s->color = RBTNodeColor::red;
+                z = p;
+                p = z->parent;
+            }
+            // case3 - end case
+            // sibling is black, and its rchild is red
+            else if (s->rchild->color == RBTNodeColor::red) {
+                s->color = p->color;
+                p->color = RBTNodeColor::black;
+                s->rchild->color = RBTNodeColor::black;
+                LeftRotate(p);
+                break;
+            }
+            // case 4
+            // sibling is black, its rchild is black
+            // and its lchild is red
+            else {
+                s->color = RBTNodeColor::red;
+                s->lchild->color = RBTNodeColor::black;
+                RightRotate(s);
+                s = p->rchild;
+            }
+        }
+        // same as if, just z == p->parent->rchild
+        else {
+            RBTNode<T>* s = p->lchild;
+            // case1
+            // sibling is red
+            if (s->color == RBTNodeColor::red) {
+                s->color = RBTNodeColor::black;
+                p->color = RBTNodeColor::red;
+                RightRotate(p);
+                s = p->lchild;
+            }
+            // case2
+            // sibling is black
+            // and both of its children are black
+            if (s->lchild->color == RBTNodeColor::black &&
+                s->rchild->color == RBTNodeColor::black) {
+                z->color = RBTNodeColor::red;
+                s->color = RBTNodeColor::red;
+                z = p;
+                p = z->parent;
+            }
+            // case3 - end case
+            // sibling is black, and its lchild is red
+            else if (s->lchild->color == RBTNodeColor::red) {
+                s->color = p->color;
+                p->color = RBTNodeColor::black;
+                s->lchild->color = RBTNodeColor::black;
+                RightRotate(p);
+                break;
+            }
+            // case4
+            // sibling is black, its lchild is black
+            // and its rchild is red
+            else {
+                s->color = RBTNodeColor::red;
+                s->rchild->color = RBTNodeColor::black;
+                LeftRotate(s);
+                s = p->lchild;
+            }
+        }
+    }
+    z->color = RBTNodeColor::black;
+}
+
+template <typename T>
+void RBTree<T>::destroy(RBTNode<T>* t) {
+    if (t != nil) {
+        destroy(t->lchild);
+        destroy(t->rchild);
+        delete t;
+    }
+}
+template <typename T>
+void RBTree<T>::destroy() {
+    if (root != nil) {
+        destroy(root);
+        root = nil;
+    }
+}
+
 }  // namespace MyDataStructure
 
 #endif
