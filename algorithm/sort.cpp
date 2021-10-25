@@ -127,9 +127,7 @@ void random_quick_sort(T a[], int p, int r) {
 // counting sort
 // must be used to sort on integers
 void counting_sort(int a[], int b[], int len, int max) {
-    int* c = new int[max + 1];
-    for (int i = 0; i <= max; i++)
-        c[i] = 0;
+    int* c = new int[max + 1]{0};
     for (int i = 0; i < len; i++)
         c[a[i]]++;
     for (int i = 0; i < max; i++)
@@ -164,32 +162,27 @@ void counting_sort(int a[], int len) {
 }
 
 // radix sort - based on decimalism
-void counting_sort(int a[], int len, int max, int d) {
-    int x;
-    int* c = new int[max + 1]{0};
-    for (int i = 0; i < len; i++) {
-        x = a[i] % int(pow(10, d)) / int(pow(10, d - 1));
-        c[x]++;
-    }
-    for (int i = 0; i < max; i++)
-        c[i + 1] += c[i];
-
-    int* b = new int[len];
-    for (int i = len - 1; i >= 0; i--) {
-        x = a[i] % int(pow(10, d)) / int(pow(10, d - 1));
-        b[c[x] - 1] = a[i];
-        c[x]--;
-    }
-    for (int i = 0; i < len; i++)
-        a[i] = b[i];
-    delete[] b;
-    delete[] c;
+static const int tenp[] = {1,      10,      100,       1'000,
+                           10'000, 100'000, 1'000'000, 10'000'000};
+// 得到数字x的第bit+1位数
+inline int getbit(int x, int bit) {
+    return x / tenp[bit] % 10;
 }
 void radix_sort(int a[], int len, int max) {
     int d = log10(max) + 1;
     int* temp = new int[len];
-    for (int i = 1; i <= d; i++)
-        counting_sort(a, len, 9, i);
+    for (int i = 0; i < d; i++) {
+        int count[10] = {0};
+        for (int j = 0; j < len; j++)
+            count[getbit(a[j], i)]++;
+        for (int j = 1; j < 10; j++)
+            count[j] += count[j - 1];
+        for (int j = len - 1; j >= 0; j--)
+            temp[--count[getbit(a[j], i)]] = a[j];
+        for (int j = 0; j < len; j++)
+            a[j] = temp[j];
+    }
+    delete[] temp;
 }
 void radix_sort(int a[], int len) {
     int max = a[0];
