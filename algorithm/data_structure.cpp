@@ -545,7 +545,7 @@ void RBTree<T>::print() const {
     if (root != nil)
         print(root, root->key, 0);
     else
-        std::cout << "enpty tree\n";
+        std::cout << "empty tree\n";
 }
 
 template <typename T>
