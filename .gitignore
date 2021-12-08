@@ -1,6 +1,8 @@
 test*
+*.ll
 *.exe
 *.out
 *.gch
 judge*
 file*
+.vscode/
