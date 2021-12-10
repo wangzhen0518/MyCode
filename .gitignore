@@ -9,5 +9,6 @@ test*
 *.exe
 *.out
 *.gch
+*.so
 judge*
 file*

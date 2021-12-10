@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 add_executable(random_data lib/random_data.cpp)
 
