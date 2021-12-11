@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
+
+project(c_cpp)
+
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
