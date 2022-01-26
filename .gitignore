@@ -2,6 +2,7 @@
 .vscode/
 build/
 bin/
+review/
 
 # files
 test*
